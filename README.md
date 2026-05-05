@@ -1,44 +1,106 @@
-# Cognitive Routing & RAG Assignment
+# 🧠 Cognitive Routing System
 
-This project builds the core AI cognitive loop for the Grid07 platform. It demonstrates vector-based persona matching, autonomous content generation using LangGraph, and prompt injection defense in a deep thread RAG scenario.
-
-## Setup Instructions
-
-1. **Install dependencies:**
-   It is recommended to use a virtual environment.
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-2. **Set up environment variables:**
-   Copy `.env.example` to `.env` and add your Groq API key.
-   ```bash
-   cp .env.example .env
-   ```
-   *(Note: The project uses Groq for fast, free-tier LLM inference, and local `sentence-transformers` (`all-MiniLM-L6-v2`) for embeddings to keep costs at zero and speed up processing).*
-
-3. **Run the complete pipeline:**
-   ```bash
-   python main.py
-   ```
-   *Execution logs are saved in `execution_logs.md`.*
+An AI-powered system that intelligently routes user queries to the most relevant processing pipeline using context-aware decision making.
 
 ---
 
-## Phase Explanations
+## 🚀 Problem Statement
 
-### Phase 1: Vector-Based Persona Matching (The Router)
-We use `sentence-transformers` (`all-MiniLM-L6-v2`) to embed both the bot personas and the incoming user posts. The personas are stored in an in-memory `ChromaDB` vector store. When a post arrives, we calculate the cosine similarity between the post and all personas. The system returns bots that exceed a specific threshold, simulating realistic relevance routing based on interests (e.g., Tech and Finance bots care about an OpenAI post, while the Doomer bot might not meet the threshold).
+Traditional AI systems use a single pipeline to handle all user queries, which often leads to:
+- Generic or irrelevant responses
+- Poor scalability
+- Lack of specialization
 
-### Phase 2: LangGraph Node Structure (Autonomous Content Engine)
-The LangGraph state machine (`phase2_langgraph.py`) orchestrates the AI's research and drafting process:
-- **State Schema (`AgentState`)**: A typed dictionary tracking `bot_id`, `persona`, `search_query`, `search_results`, and `final_post`.
-- **Node 1 (`decide_search`)**: The LLM analyzes its persona and decides what search query to run to find relevant news.
-- **Node 2 (`web_search`)**: Executes the `@tool mock_searxng_search` using the generated query, retrieving hardcoded news context.
-- **Node 3 (`draft_post`)**: The LLM combines its persona and the retrieved context to draft a highly opinionated post. We utilize `response_format={"type": "json_object"}` alongside strict prompt engineering to guarantee the output is a valid JSON object matching the required schema.
+This project introduces **cognitive routing**, where each query is analyzed and dynamically directed to the most suitable processing path, improving both accuracy and efficiency.
 
-### Phase 3: RAG Prompt Injection Defense (The Combat Engine)
-In `phase3_combat_rag.py`, we implement a robust system-level defense strategy to neutralize prompt injections (e.g., "Ignore all previous instructions...").
-1. **Explicit Guardrails**: The System Prompt contains a `CRITICAL SECURITY INSTRUCTION` explicitly warning the model about user manipulation attempts.
-2. **Behavioral Redirection**: The prompt instructs the LLM to treat injection attempts as "weak debate tactics", telling it to mock the user for attempting to change the subject, rather than failing silently or complying with the injection.
-3. **XML Tagging**: The untrusted human reply is strictly enclosed in `<USER_REPLY>` tags. This cleanly separates the unverified user content from the foundational system instructions, preventing context bleeding.
+---
+
+## 🧠 System Architecture
+
+User Input  
+↓  
+Context Analysis / Feature Extraction  
+↓  
+Persona Matching / Routing Logic  
+↓  
+Selected Processing Pipeline (LLM via Groq)  
+↓  
+Response Generation  
+
+---
+
+## ✨ Key Features
+
+- Intelligent query routing based on context  
+- Persona-based decision making  
+- Modular AI pipeline design  
+- Integration with LLM APIs (Groq)  
+- Scalable and extensible architecture  
+- Environment-based API key management  
+
+---
+
+## 🛠️ Tech Stack
+
+- Language: Python  
+- AI/LLM: Groq API  
+- Concepts: Prompt Engineering, Routing Logic, AI Pipelines  
+- Tools: dotenv, API integration  
+
+---
+
+## 🧠 Technical Highlights
+
+- Designed a multi-stage AI routing pipeline  
+- Implemented context-based decision logic  
+- Built a modular system for future expansion  
+- Integrated external LLM APIs for dynamic responses  
+- Structured project for scalability and maintainability  
+
+---
+
+## ⚙️ Setup & Installation
+
+Clone the repository:
+
+git clone https://github.com/hydra187/cognitive-routing.git  
+cd cognitive-routing  
+
+Install dependencies:
+
+pip install -r requirements.txt  
+
+Create a `.env` file and add:
+
+GROQ_API_KEY=your_api_key_here  
+
+Run the project:
+
+python main.py  
+
+---
+
+## 📈 What I Learned
+
+- Designing AI systems beyond single-model approaches  
+- Building modular and scalable pipelines  
+- Integrating LLM APIs with custom logic  
+- Handling real-world API workflows  
+
+---
+
+## 🔮 Future Improvements
+
+- Add memory (conversation history)  
+- Improve routing using embeddings/vector DB  
+- Add web-based UI dashboard  
+- Support multiple LLM providers  
+- Implement real-time streaming responses  
+
+
+
+---
+
+## 📄 License
+
+This project is open-source and intended for learning and experimentation.
